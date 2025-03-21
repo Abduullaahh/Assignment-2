@@ -4,9 +4,9 @@ const ProjectCard = ({ title, description, imageUrl, githubLink }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden h-full flex flex-col transform hover:scale-105 transition-transform duration-300">
       <div className="h-48 overflow-hidden">
-        <img 
-          src={imageUrl} 
-          alt={title} 
+        <img
+          src={imageUrl}
+          alt={title}
           className="w-full h-full object-cover"
         />
       </div>
@@ -15,7 +15,7 @@ const ProjectCard = ({ title, description, imageUrl, githubLink }) => {
         <p className="text-gray-700 dark:text-gray-300 mb-4">{description}</p>
       </div>
       <div className="px-6 pb-4">
-        <a 
+        <a
           href={githubLink}
           target="_blank"
           rel="noopener noreferrer"
