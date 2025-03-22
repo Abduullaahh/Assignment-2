@@ -19,10 +19,6 @@ function App() {
             )
           } 
         />
-        <Route 
-          path="/portfolio" 
-          element={<Portfolio data={portfolioData} />} 
-        />
       </Routes>
     </Router>
   );
