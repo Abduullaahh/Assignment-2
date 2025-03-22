@@ -1,62 +1,83 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from "react"
+import { Sun, Moon, Menu, X } from "lucide-react"
 
 const Navbar = ({ darkMode, toggleDarkMode }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  
-  const toggleMenu = () => setMenuOpen(!menuOpen);
-  
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  // Scroll effect
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  const baseStyles = darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-800"
+  const linkStyles = `transition-colors duration-200 ${
+    darkMode ? "hover:bg-gray-800 hover:text-indigo-400" : "hover:bg-gray-100 hover:text-indigo-600"
+  }`
+  const toggleStyles = `p-2 rounded-full transition-colors duration-200 ${
+    darkMode ? "bg-gray-700 hover:bg-gray-600 text-yellow-300" : "bg-gray-100 hover:bg-gray-200 text-indigo-600"
+  }`
+
   return (
-    <nav className={`${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'} shadow-md`}>
+    <nav
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${baseStyles} ${scrolled ? "shadow-lg py-2" : "py-4"}`}
+    >
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between">
-          <div className="flex space-x-4">
-            <div>
-              <a href="#" className="flex items-center py-5 px-2 text-xl font-bold">
-                Portfolio
-              </a>
-            </div>
-          </div>
-          
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <a href="#" className="font-extrabold text-xl">
+            <span className="text-indigo-600">Port</span>folio
+          </a>
+
           {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            <a href="#home" className="py-5 px-3 hover:text-blue-500">Home</a>
-            <a href="#about" className="py-5 px-3 hover:text-blue-500">About</a>
-            <a href="#projects" className="py-5 px-3 hover:text-blue-500">Projects</a>
-            <a href="#contact" className="py-5 px-3 hover:text-blue-500">Contact</a>
-            <button
-              onClick={toggleDarkMode}
-              className="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700"
-            >
-              {darkMode ? '☀️' : '🌙'}
+          <div className="hidden md:flex items-center">
+            {["Home", "About", "Projects", "Contact"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className={`px-4 py-2 rounded-md font-medium text-sm ${linkStyles}`}
+              >
+                {item}
+              </a>
+            ))}
+
+            {/* Dark mode toggle */}
+            <button onClick={toggleDarkMode} className={`ml-4 ${toggleStyles}`} aria-label="Toggle theme">
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
           </div>
-          
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button onClick={toggleMenu} className="mobile-menu-button p-2">
-              <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+
+          {/* Mobile controls */}
+          <div className="md:hidden flex items-center space-x-3">
+            <button onClick={toggleDarkMode} className={toggleStyles} aria-label="Toggle theme">
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+            <button onClick={() => setMenuOpen(!menuOpen)} className={`p-2 rounded-md ${linkStyles}`}>
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
       </div>
-      
+
       {/* Mobile menu */}
-      <div className={`${menuOpen ? 'block' : 'hidden'} md:hidden`}>
-        <a href="#home" className="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
-        <a href="#about" className="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700">About</a>
-        <a href="#projects" className="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700">Projects</a>
-        <a href="#contact" className="block py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700">Contact</a>
-        <button
-          onClick={toggleDarkMode}
-          className="block w-full text-left py-2 px-4 text-sm hover:bg-gray-200 dark:hover:bg-gray-700"
-        >
-          {darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        </button>
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${ menuOpen ? "max-h-60 border-t" : "max-h-0" } ${darkMode ? "border-gray-700" : "border-gray-200"}`}>
+        <div className="px-2 py-1">
+          {["Home", "About", "Projects", "Contact"].map((item) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className={`block px-4 py-3 rounded-md font-medium ${linkStyles}`}
+              onClick={() => setMenuOpen(false)}
+            >
+              {item}
+            </a>
+          ))}
+        </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar
