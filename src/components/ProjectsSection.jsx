@@ -6,11 +6,12 @@ const ProjectsSection = ({ projects: initialProjects }) => {
   const [projects, setProjects] = useState(initialProjects || [])
 
   useEffect(() => {
-      const projectsOrder = localStorage.getItem('projectOrder')
-      
-      if (projectsOrder) {
-        setProjects(JSON.parse(projectsOrder))
-      }
+    setProjects(initialProjects)
+    const projectsOrder = localStorage.getItem('projectOrder')
+
+    if (projectsOrder) {
+      setProjects(JSON.parse(projectsOrder))
+    }
   }, [initialProjects])
 
   // Save project order to localStorage
