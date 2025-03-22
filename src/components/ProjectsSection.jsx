@@ -4,37 +4,13 @@ import ProjectCard from "./ProjectCard"
 
 const ProjectsSection = ({ projects: initialProjects }) => {
   const [projects, setProjects] = useState(initialProjects || [])
-  const [loading, setLoading] = useState(!initialProjects)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Only fetch if no initial projects were provided
-    if (!initialProjects || initialProjects.length === 0) {
-      // Try to get saved order from localStorage first
-      const savedProjects = localStorage.getItem('projectOrder')
+      const projectsOrder = localStorage.getItem('projectOrder')
       
-      if (savedProjects) {
-        setProjects(JSON.parse(savedProjects))
-        setLoading(false)
-      } else {
-        // Fall back to API fetch if no saved order
-        const fetchProjects = async () => {
-          try {
-            setLoading(true)
-            // Add your API call here to fetch projects
-            // const response = await fetch('/api/projects');
-            // const data = await response.json();
-            // setProjects(data);
-            setLoading(false)
-          } catch (err) {
-            setError("Failed to fetch projects")
-            setLoading(false)
-          }
-        }
-
-        fetchProjects()
+      if (projectsOrder) {
+        setProjects(JSON.parse(projectsOrder))
       }
-    }
   }, [initialProjects])
 
   // Save project order to localStorage
@@ -71,53 +47,7 @@ const ProjectsSection = ({ projects: initialProjects }) => {
           </p>
         </div>
 
-        {loading && (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-10 px-4 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg max-w-md mx-auto">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 mx-auto mb-3"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p>{error}</p>
-          </div>
-        )}
-
-        {!loading && !error && projects.length === 0 && (
-          <div className="text-center py-16 px-4 bg-gray-100 dark:bg-gray-800 rounded-lg max-w-md mx-auto">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 mx-auto mb-3 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-              />
-            </svg>
-            <p className="text-gray-600 dark:text-gray-300">No projects found</p>
-          </div>
-        )}
-
-        {!loading && !error && projects.length > 0 && (
+        {projects.length > 0 && (
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="projects" direction="horizontal" type="PROJECTS">
               {(provided) => (
