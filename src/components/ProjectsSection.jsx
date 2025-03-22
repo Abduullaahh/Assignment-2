@@ -10,23 +10,43 @@ const ProjectsSection = ({ projects: initialProjects }) => {
   useEffect(() => {
     // Only fetch if no initial projects were provided
     if (!initialProjects || initialProjects.length === 0) {
-      const fetchProjects = async () => {
-        try {
-          setLoading(true)
-          // Add your API call here to fetch projects
-          // const response = await fetch('/api/projects');
-          // const data = await response.json();
-          // setProjects(data);
-          setLoading(false)
-        } catch (err) {
-          setError("Failed to fetch projects")
-          setLoading(false)
+      // Try to get saved order from localStorage first
+      const savedProjects = localStorage.getItem('projectOrder')
+      
+      if (savedProjects) {
+        setProjects(JSON.parse(savedProjects))
+        setLoading(false)
+      } else {
+        // Fall back to API fetch if no saved order
+        const fetchProjects = async () => {
+          try {
+            setLoading(true)
+            // Add your API call here to fetch projects
+            // const response = await fetch('/api/projects');
+            // const data = await response.json();
+            // setProjects(data);
+            setLoading(false)
+          } catch (err) {
+            setError("Failed to fetch projects")
+            setLoading(false)
+          }
         }
-      }
 
-      fetchProjects()
+        fetchProjects()
+      }
     }
   }, [initialProjects])
+
+  // Save project order to localStorage
+  const saveProjectOrder = (items) => {
+    try {
+      setProjects(items)
+      localStorage.setItem('projectOrder', JSON.stringify(items))
+      console.log('Project order saved to localStorage')
+    } catch (error) {
+      console.error('Error saving project order:', error)
+    }
+  }
 
   // Handle drag end event
   const onDragEnd = (result) => {
@@ -35,11 +55,7 @@ const ProjectsSection = ({ projects: initialProjects }) => {
     const items = Array.from(projects)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
-
-    setProjects(items)
-
-    // You can add here a function to persist the new order
-    // Example: saveProjectOrder(items);
+    saveProjectOrder(items)
   }
 
   return (
